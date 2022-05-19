@@ -4,7 +4,7 @@
 #include <vector>
 #include <fstream>
 #include "nlohmann/json.hpp"
-#include "include/converter_json.h"
+#include "converter_json.h"
 
 /** Exceptions **/
 
@@ -40,14 +40,14 @@ const char *AnswersFileIsMissingException::what() const noexcept {
 
 bool repeat(){
     char answer;
-    while(answer != 'Y' && answer != 'y' && answer != 'N' &&
-          answer != 'n') {
+    do{
         std::cout << "Repeat operation (Y/N)?" << std::endl;
         std::cin >> answer;
         if (answer == 'Y' || answer == 'y') return true;
         else if (answer == 'N' || answer == 'n') return false;
         else std::cerr<<"Wrong command!"<<std::endl;
-    }
+    }while(answer != 'Y' && answer != 'y' && answer != 'N' &&
+          answer != 'n');
 }
 
 /** Classes for work with JSON files **/

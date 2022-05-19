@@ -9,6 +9,8 @@ struct Entry{
     Entry(size_t _doc_id,size_t _count);
     // This operator is necessary for conducting test scenarios
     bool operator==(const Entry& other) const;
+    // This operator is necessary for sorting by doc_id
+    bool operator<(const Entry& other) const;
 };
 
 class InvertedIndex{

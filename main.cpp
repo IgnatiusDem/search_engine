@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "include/converter_json.h"
-#include "include/inverted_index.h"
-#include "include/search_server.h"
+#include "converter_json.h"
+#include "inverted_index.h"
+#include "search_server.h"
 
 int main() {
     ConverterJSON converterJson;

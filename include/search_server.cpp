@@ -1,10 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "include/converter_json.h"
-#include "include/inverted_index.h"
-//#include "gtest/gtest.h"
-#include "include/search_server.h"
+#include "inverted_index.h"
+#include "search_server.h"
 
 /** Methods for RelativeIndex struct **/
 
@@ -38,14 +36,16 @@ void SearchServer::sortWordRelativeIndex(const int &indexRequest,
     while(!isOver){
         if (rank < search[indexRequest][i].rank) {
             i++;
-        }else if (rank == search[indexRequest][i].rank &&
+        }else if (rank >= search[indexRequest][i].rank-0.1 &&
+                  rank <= search[indexRequest][i].rank+0.1 &&
                   doc_id > search[indexRequest][i].doc_id) {
             i++;
         } else if ((i - 1) >= 0 && rank >
                                    search[indexRequest][i - 1].rank) {
             i--;
         } else if ((i - 1) >= 0 &&
-                   rank == search[indexRequest][i-1].rank &&
+                   rank >= search[indexRequest][i-1].rank-0.1 &&
+                   rank <= search[indexRequest][i-1].rank+0.1 &&
                    doc_id < search[indexRequest][i - 1].doc_id) {
             i--;
         } else if (i < search[indexRequest].size() - 1) {
@@ -68,7 +68,6 @@ void SearchServer::addWordRelevantIndex(const int& indexRequest,
                                         search){
     //the frequency of word
     std::vector<Entry> wordCount=_index.GetWordCount(word);
-
     if(indexRequest+1>search.size())
         search.resize(indexRequest+1);
 
@@ -100,7 +99,7 @@ void SearchServer::addWordRelevantIndex(const int& indexRequest,
             }
         }
         // adding for NOT existing documents
-        if (!isExist&&wordCountElement.count > maxRelevant) {
+        if (!isExist&&wordCountElement.count > (size_t)maxRelevant) {
             maxRelevant = (int)wordCountElement.count;
             search[indexRequest].insert(
                     search[indexRequest].begin(),
@@ -177,116 +176,3 @@ transformRelativeIndex(std::vector<std::vector<RelativeIndex>> search){
     }
     return result;
 }
-
-/**TESTS**/
-/*
-//Test #1
-TEST(TestCaseSearchServer, TestSimple) {
-    const std::vector<std::string> docs = {
-            "milk milk milk milk water water water",
-            "milk water water",
-            "milk milk milk milk milk water water water water water",
-            "Americano Cappuccino"
-    };
-    const std::vector<std::string> request = {"milk water", "sugar"};
-    const std::vector<std::vector<RelativeIndex>> expected = {
-            {
-                    {2, 1},
-                    {0, 0.7},
-                    {1, 0.3}
-            },
-            {
-                    {}
-            }
-    };
-    InvertedIndex idx;
-    idx.UpdateDocumentBase(docs);
-    SearchServer srv(idx);
-    std::vector<std::vector<RelativeIndex>> result = srv.search(request,5);
-    std::cout<<"My"<<std::endl;
-    int i=0;
-    for(auto& element:result){
-        std::cout<<i<<": "<<std::endl;
-        for (auto& secondElement:element){
-            if(!element.empty()) std::cout<<secondElement.doc_id<<" "<<secondElement.rank<<std::endl;
-        }
-        i++;
-    }
-    std::cout<<"Correct"<<std::endl;
-    i=0;
-    for(auto& element:expected){
-        std::cout<<i<<": "<<std::endl;
-        for (auto& secondElement:element){
-            if(!element.empty()) std::cout<<secondElement.doc_id<<" "<<secondElement.rank<<std::endl;
-        }
-        i++;
-    }
-    ConverterJSON converter;
-    converter.putAnswers(srv.transformRelativeIndex(result));
-    ASSERT_EQ(result, expected);
-}
-
-//Test #2 (expected file not correct)
-TEST(TestCaseSearchServer, TestTop5) {
-    const std::vector<std::string> docs = {
-            "london is the capital of great britain",
-            "paris is the capital of france",
-            "berlin is the capital of germany",
-            "rome is the capital of italy",
-            "madrid is the capital of spain",
-            "lisboa is the capital of portugal",
-            "bern is the capital of switzerland",
-            "moscow is the capital of russia",
-            "kiev is the capital of ukraine",
-            "minsk is the capital of belarus",
-            "astana is the capital of kazakhstan",
-            "beijing is the capital of china",
-            "tokyo is the capital of japan",
-            "bangkok is the capital of thailand",
-            "welcome to moscow the capital of russia the third rome",
-            "amsterdam is the capital of netherlands",
-            "helsinki is the capital of finland",
-            "oslo is the capital of norway",
-            "stockholm is the capital of sweden",
-            "riga is the capital of latvia",
-            "tallinn is the capital of estonia",
-            "warsaw is the capital of poland",
-    };
-    const std::vector<std::string> request = {"moscow is the capital of russia"};
-    const std::vector<std::vector<RelativeIndex>> expected = {
-            {
-                    {7, 1},
-                    {14, 1},
-                    {0, 0.4},
-                    {1, 0.4},
-                    {2, 0.4}
-            }
-    };
-    InvertedIndex idx;
-    idx.UpdateDocumentBase(docs);
-
-    SearchServer srv(idx);
-    std::vector<std::vector<RelativeIndex>> result = srv.search(request,5);
-    std::cout<<"My result: "<<std::endl;
-    int i=0;
-    for(auto& element:result){
-        std::cout<<i<<": "<<std::endl;
-        for (auto& secondElement:element){
-            if(!element.empty()) std::cout<<secondElement.doc_id<<" "<<secondElement.rank<<std::endl;
-        }
-        i++;
-    }
-
-    std::cout<<"Expected: "<<std::endl;
-    i=0;
-    for(auto& element:expected){
-        std::cout<<i<<": "<<std::endl;
-        for (auto& secondElement:element){
-            if(!element.empty()) std::cout<<secondElement.doc_id<<" "<<secondElement.rank<<std::endl;
-        }
-        i++;
-    }
-
-    ASSERT_EQ(result, expected);
-}
-*/
