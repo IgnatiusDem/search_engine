@@ -149,7 +149,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search
     //Transform sum absolute relevant numbers for document
     //to relative relevance
     for(auto& firstSearch:search){
-        for(int i=firstSearch.size()-1;i>=0;i--){
+        for(int i=(int)firstSearch.size()-1;i>=0;i--){
             if(i>=max_responses) {
                 firstSearch.erase(firstSearch.begin()+i);
             }else {
@@ -167,7 +167,7 @@ std::vector<std::vector<std::pair<int, float>>>SearchServer::
 transformRelativeIndex(std::vector<std::vector<RelativeIndex>> search){
     std::vector<std::vector<std::pair<int, float>>> result;
     int i=0;
-    for(auto first:search){
+    for(auto& first:search){
         result.resize(i+1);
         for (auto second:first){
             result[i].push_back(std::pair<int, float>(second.doc_id,second.rank));

@@ -8,7 +8,7 @@
 
 /**TESTS**/
 //Test #1
-TEST(TestCaseSearchServer, TestSimple) {
+TEST(TestCaseSearchServer, TestSimple2) {
     const std::vector<std::string> docs = {
             "milk milk milk milk water water water",
             "milk water water",
@@ -48,9 +48,11 @@ TEST(TestCaseSearchServer, TestSimple) {
         }
         i++;
     }
+
     bool check=result==expected;
     if(check)std::cout<<"TRUE"<<std::endl;
     else std::cout<<"FALSE"<<std::endl;
+
     ConverterJSON converter;
     converter.putAnswers(srv.transformRelativeIndex(result));
     ASSERT_EQ(result, expected);

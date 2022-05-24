@@ -48,6 +48,7 @@ bool repeat(){
         else std::cerr<<"Wrong command!"<<std::endl;
     }while(answer != 'Y' && answer != 'y' && answer != 'N' &&
           answer != 'n');
+    return false;
 }
 
 /** Classes for work with JSON files **/
@@ -166,24 +167,25 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
         if (configRead["config"].empty() || configRead["files"].empty()) {
             throw ConfigFileIsEmptyException();
         }
-        if (configRead["config"]["version"]!=configJSON.version||
-            configRead["config"]["name"]!=configJSON.name) {
+        if (configRead["config"]["version"].get<std::string>()!=configJSON.version||
+            configRead["config"]["name"].get<std::string>()!=configJSON.name) {
             throw DifferentVersionException();
         }
-        configJSON.files=configRead["files"];
+        configJSON.files=configRead["files"].get<std::vector<std::string>>();
         fileRead.close();
         configRead.clear();
         std::vector<std::string> docs;
-        for(int i=0;i<configJSON.files.size();i++){
+        for(auto & file : configJSON.files){
             std::string text;
-            std::ifstream fileRead(configJSON.files[i]);
-            if(!fileRead.is_open()) throw TextFileIsMissingException();
-            while(!fileRead.eof()){
+            std::ifstream fileReadText(file);
+            if(!fileReadText.is_open()) throw TextFileIsMissingException();
+            while(!fileReadText.eof()){
                 std::string curWord;
-                fileRead>>curWord;
+                fileReadText>>curWord;
                 text+=curWord+" ";
             }
             docs.push_back(text);
+            fileReadText.close();
         }
         return docs;
     }
@@ -219,11 +221,11 @@ int ConverterJSON::GetResponsesLimit() {
         if (configRead["config"]["max_responses"].empty()) {
             throw ConfigFileIsEmptyException();
         }
-        if (configRead["config"]["version"]!=configJSON.version||
-            configRead["config"]["name"]!=configJSON.name) {
+        if (configRead["config"]["version"].get<std::string>()!=configJSON.version||
+            configRead["config"]["name"].get<std::string>()!=configJSON.name) {
             throw DifferentVersionException();
         }
-        configJSON.max_responses = configRead["config"]["max_responses"];
+        configJSON.max_responses = configRead["config"]["max_responses"].get<int>();
         fileRead.close();
         configRead.clear();
         return configJSON.max_responses;
@@ -255,7 +257,7 @@ std::vector<std::string> ConverterJSON::GetRequests() {
         if (requestsRead["requests"].empty()) {
             throw RequestFileIsEmptyException();
         }
-        requestJSON.requests = requestsRead["requests"];
+        requestJSON.requests=requestsRead["requests"].get<std::vector<std::string>>();
         fileRead.close();
         requestsRead.clear();
         return requestJSON.requests;
