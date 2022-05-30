@@ -3,9 +3,9 @@ project(testInvertedIndex)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(testInvertedIndex ${MY_INCLUDE_DIR}/inverted_index.cpp
+add_executable(testInvertedIndex ${MY_SOURCE_DIR}/inverted_index.cpp
                                  ${MY_INCLUDE_DIR}/inverted_index.h
-                                 ${MY_INCLUDE_DIR}/converter_json.cpp
+                                 ${MY_SOURCE_DIR}/converter_json.cpp
                                  ${MY_INCLUDE_DIR}/converter_json.h
                                  testInvertedIndex.cpp)
 
@@ -15,7 +15,7 @@ FetchContent_Declare(
         URL
         https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
 )
-target_include_directories(testInvertedIndex PRIVATE ${MY_INCLUDE_DIR} ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+target_include_directories(testInvertedIndex PRIVATE ${MY_INCLUDE_DIR} ${MY_SOURCE_DIR} ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 set(gtest_disable_pthreads on)
 FetchContent_MakeAvailable(googletest)
 enable_testing()
