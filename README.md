@@ -29,9 +29,11 @@ files**
 - include/converter_json.h
 - include/inverted_index.h
 - include/search_server.h
-- converter_json.cpp
-- inverted_index.cpp
-- search_server.cpp
+- src/converter_json.cpp
+- src/inverted_index.cpp
+- src/search_server.cpp
+
+tests for check right working project in directory "test"
 
 ## How to use
 
@@ -41,6 +43,14 @@ Include header in main.cpp
 
 ```
 #include "include/converter_json.h"
+```
+or if you include directories "src" and "include" in CMakeList.txt:
+```
+target_include_directories(search_engine PRIVATE ${MY_INCLUDE_DIR} ${MY_SOURCE_DIR})
+```
+you can include like:
+```
+#include "converter_json.h" 
 ```
 Create a class in project
 
@@ -97,6 +107,14 @@ Include header in main.cpp
 ```
 #include "include/inverted_index.h"
 ```
+or if you include directories "src" and "include" in CMakeList.txt:
+```
+target_include_directories(search_engine PRIVATE ${MY_INCLUDE_DIR} ${MY_SOURCE_DIR})
+```
+you can include like:
+```
+#include "inverted_index.h" 
+```
 Create a class in project
 
 ```
@@ -116,7 +134,17 @@ InvertedIndex idx;
 Include header in main.cpp
 
 ```
-#include "include/inverted_index.h"
+#include "include/inverted_index.h" //Required
+#include "include/search_server.h"
+```
+or if you include directories "src" and "include" in CMakeList.txt:
+```
+target_include_directories(search_engine PRIVATE ${MY_INCLUDE_DIR} ${MY_SOURCE_DIR})
+```
+you can include like:
+```
+#include "inverted_index.h" //Required
+#include "search_server.h"
 ```
 Create a class in project
 
@@ -137,68 +165,4 @@ SearchServer srv(idx);
     std::vector<std::vector<std::pair<int, float>>> transformRelativeIndex(std::vector<std::vector<RelativeIndex>> search);
     ```
     
-### Example
 
-```
-#include <iostream>
-#include <vector>
-#include <map>
-#include "include/converter_json.h"
-#include "include/inverted_index.h"
-#include "include/search_server.h"
-
-int main() {
-    ConverterJSON converterJson;
-    // Create and save to file requests
-    std::vector<std::string> request = {"milk water", "sugar"};
-    converterJson.addRequests(request);
-    std::vector<std::string> newFiles = {"/resources/file001.txt",
-                                         "/resources/file002.txt",
-                                         "/resources/file003.txt",
-                                         "/resources/file004.txt"};
-    converterJson.addFiles(newFiles);
-    // Load request from file request.json
-    request=converterJson.GetRequests();
-    // Get text from documents
-    const std::vector<std::string> docs = converterJson.GetTextDocuments();
-    // Get inverted index from documents
-    InvertedIndex idx;
-    idx.UpdateDocumentBase(docs);
-    // Search by request
-    SearchServer srv(idx);
-    int max_responses=converterJson.GetResponsesLimit();
-    std::vector<std::vector<RelativeIndex>> result = srv.search(request,max_responses);
-    //Expected file for check
-    const std::vector<std::vector<RelativeIndex>> expected = {
-            {
-                    {2, 1},
-                    {0, 0.7},
-                    {1, 0.3}
-            },
-            {
-                    {}
-            }
-    };
-    // Print results
-    std::cout<<"My result"<<std::endl;
-    int i=0;
-    for(auto& element:result){
-        std::cout<<i<<": "<<std::endl;
-        for (auto& secondElement:element){
-            if(!element.empty()) std::cout<<secondElement.doc_id<<" "<<secondElement.rank<<std::endl;
-        }
-        i++;
-    }
-    std::cout<<"Correct"<<std::endl;
-    i=0;
-    for(auto& element:expected){
-        std::cout<<i<<": "<<std::endl;
-        for (auto& secondElement:element){
-            if(!element.empty()) std::cout<<secondElement.doc_id<<" "<<secondElement.rank<<std::endl;
-        }
-        i++;
-    }
-    //Save answers to answers.json
-    converterJson.putAnswers(srv.transformRelativeIndex(result));
-}
-```
