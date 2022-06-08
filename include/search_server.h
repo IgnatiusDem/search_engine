@@ -33,6 +33,9 @@ public:
                             int &maxRelevant,
                             std::vector<std::vector<RelativeIndex>> &search);
 
+  // * Method of check unique word of request
+  bool checkUniqueWord(const std::string& word,
+                       const std::vector<std::string>& uniqueWords);
   // * Method of processing search queries
   // * @param queries_input search queries taken from requests.json
   // * @return returns a sorted list of relevant responses for

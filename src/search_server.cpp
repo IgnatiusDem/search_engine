@@ -101,6 +101,15 @@ void SearchServer::addWordRelevantIndex(
   }
 }
 
+// * Method of check unique word of request
+bool SearchServer::checkUniqueWord(const std::string& word,
+                                   const std::vector<std::string>& uniqueWords){
+  for(auto it:uniqueWords){
+    if(word==it) return false;
+  }
+  return true;
+}
+
 // * Method of processing search queries
 // * @param queries_input search queries taken from requests.json
 // * @return returns a sorted list of relevant responses for
@@ -118,17 +127,26 @@ SearchServer::search(const std::vector<std::string> &queries_input,
     std::string word;
     // get words from queries and after create relevant index
     for (int j = 0; j < queries_input[i].size(); j++) {
+      std::vector<std::string> uniqueWords;
       if (word.empty()) {
         word = queries_input[i][j];
       } else if (queries_input[i][j] != ' ') {
         word += queries_input[i][j];
       } else {
-        addWordRelevantIndex(i, word, maxRelevant, search);
-        word.clear();
+        bool check=checkUniqueWord(word,uniqueWords);
+        if(check) {
+          uniqueWords.push_back(word);
+          addWordRelevantIndex(i, word, maxRelevant, search);
+          word.clear();
+        }
       }
 
       if (j == queries_input[i].size() - 1 && !word.empty()) {
-        addWordRelevantIndex(i, word, maxRelevant, search);
+        bool check=checkUniqueWord(word,uniqueWords);
+        if(check) {
+          uniqueWords.push_back(word);
+          addWordRelevantIndex(i, word, maxRelevant, search);
+        }
       }
     }
   }
