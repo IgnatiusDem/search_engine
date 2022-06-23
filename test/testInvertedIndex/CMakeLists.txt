@@ -4,6 +4,7 @@ project(testInvertedIndex)
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(testInvertedIndex testInvertedIndex.cpp
+                                 #${MY_INCLUDE_DIR}/config.h
                                  ${MY_SOURCE_DIR}/inverted_index.cpp
                                  ${MY_INCLUDE_DIR}/inverted_index.h
                                  ${MY_SOURCE_DIR}/converter_json.cpp

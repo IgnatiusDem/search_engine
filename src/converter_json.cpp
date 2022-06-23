@@ -67,6 +67,7 @@ void ConfigJSON::addMaxResponses() {
                    "should be more 0"
                 << std::endl;
   }
+  saveToFile();
 }
 
 void ConfigJSON::addMaxResponses(int newMaxResponses) {
@@ -76,6 +77,7 @@ void ConfigJSON::addMaxResponses(int newMaxResponses) {
     std::cerr << "Max responses should be more 0" << std::endl;
   else
     max_responses = newMaxResponses;
+  saveToFile();
 }
 
 void ConfigJSON::addFiles() {
@@ -87,10 +89,12 @@ void ConfigJSON::addFiles() {
     files.push_back(address);
     check = repeat();
   } while (check);
+  saveToFile();
 }
 
 void ConfigJSON::addFiles(std::vector<std::string> &newFiles) {
   files = std::move(newFiles);
+  saveToFile();
 }
 
 void ConfigJSON::saveToFile() {

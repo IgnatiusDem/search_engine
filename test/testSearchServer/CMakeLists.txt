@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.20)
-project(testSearchServer)
+project(testSearchServer VERSION 0.1)
+#configure_file(config.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.h)
 
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(testSearchServer testSearchServer.cpp
+                                #${MY_INCLUDE_DIR}/config.h
                                 ${MY_SOURCE_DIR}/inverted_index.cpp
                                 ${MY_INCLUDE_DIR}/inverted_index.h
                                 ${MY_SOURCE_DIR}/converter_json.cpp

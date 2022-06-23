@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
-project(search_engine)
+project(search_engine VERSION 0.1)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.h)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -9,6 +10,8 @@ set(MY_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(MY_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
 add_subdirectory(test)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/resources
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 include(FetchContent)
 FetchContent_Declare(json
@@ -25,12 +28,13 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(thread-pool)
 
 add_executable(search_engine main.cpp
+                             #${MY_INCLUDE_DIR}/config.h
                              ${MY_SOURCE_DIR}/inverted_index.cpp
-                             ${MY_INCLUDE_DIR}/inverted_index.h
+                             #${MY_INCLUDE_DIR}/inverted_index.h
                              ${MY_SOURCE_DIR}/converter_json.cpp
-                             ${MY_INCLUDE_DIR}/converter_json.h
+                             #${MY_INCLUDE_DIR}/converter_json.h
                              ${MY_SOURCE_DIR}/search_server.cpp
-                             ${MY_INCLUDE_DIR}/search_server.h
+                             #${MY_INCLUDE_DIR}/search_server.h
                              )
 
 target_include_directories(search_engine PRIVATE ${MY_INCLUDE_DIR} ${MY_SOURCE_DIR} ${thread-pool_SOURCE_DIR})

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "config.h"
 /** Exceptions **/
 
 class ConfigFileIsMissingException : public std::exception {
@@ -37,11 +37,14 @@ bool repeat();
 /** Classes for work with JSON files **/
 
 struct ConfigJSON {
-  std::string name = "SearchEngine";
-  std::string version = "0.1";
-  int max_responses = 5;
+  std::string name = NAME_APP;
+  std::string version = VERSION_APP;
+  int max_responses = _MAX_RESPONSES;
   std::vector<std::string> files;
 
+  ConfigJSON(){
+    saveToFile();
+  };
   void addMaxResponses();
   void addMaxResponses(int newMaxResponses);
   void addFiles();
