@@ -5,6 +5,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include "thread_pool.hpp"
 #include "inverted_index.h"
 
 // For multi-reading of read and record freq_dictionary
@@ -41,7 +42,9 @@ void InvertedIndex::addWordToDictionary(size_t doc_id, std::string &word) {
       }
     }
     if (!check) {
+
       it->second.push_back(Entry(doc_id, 1));
+
     }
   } else {
     std::vector<Entry> inputVector;
@@ -73,16 +76,24 @@ void InvertedIndex::findWords(size_t doc_id, const std::string &text) {
 // we will search
 // * @param texts_input document contents
 void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
-  docs = std::move(input_docs);
-  std::vector<std::thread> threads;
-  threads.resize(docs.size());
-  for (int i = 0; i < docs.size(); i++) {
-    threads[i] =
-        std::thread(&InvertedIndex::findWords, this, i, std::ref(docs[i]));
+  docs = input_docs;
+  int maxThreads=(int)std::thread::hardware_concurrency()-1;
+  synced_stream sync_out;
+
+  //Create pool of streams for find words and create freq_dictionary
+  thread_pool pool;
+  pool.reset(maxThreads);
+  size_t doc_id = 0;
+  for (const std::string &input_doc:input_docs) {
+    pool.submit([this, doc_id, input_doc] {
+      findWords(doc_id, input_doc);
+    });
+
+    doc_id++;
   }
-  for (auto &t : threads) {
-    t.join();
-  }
+
+  pool.wait_for_tasks();
+
   // To exclude an error when a thread with a smaller doc_id ended earlier
   for (auto &it : freq_dictionary) {
     std::sort(it.second.begin(), it.second.end());
