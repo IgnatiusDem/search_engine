@@ -120,10 +120,12 @@ void RequestsJSON::addRequests() {
     requests.push_back(request);
     check = repeat();
   } while (check);
+  saveToFile();
 }
 
 void RequestsJSON::addRequests(std::vector<std::string> &newRequests) {
   requests = std::move(newRequests);
+  saveToFile();
 }
 
 void RequestsJSON::saveToFile() {
@@ -147,13 +149,11 @@ ConverterJSON::ConverterJSON() {
 // * Method of add requests by input from command to requests.json
 void ConverterJSON::addRequests() {
   requestJSON.addRequests();
-  requestJSON.saveToFile();
 }
 
 // * Method of add requests by load exist data to requests.json
 void ConverterJSON::addRequests(std::vector<std::string> &newRequests) {
   requestJSON.addRequests(newRequests);
-  requestJSON.saveToFile();
 }
 
 // * Method of add addresses files to config.json
@@ -188,6 +188,7 @@ std::vector<std::string> ConverterJSON::GetTextDocuments() {
     std::vector<std::string> docs;
     for (auto &file : configJSON.files) {
       std::string text;
+      std::cout<<file<<std::endl;
       std::ifstream fileReadText(file);
       if (!fileReadText.is_open())
         throw TextFileIsMissingException();

@@ -11,8 +11,8 @@ int main() {
   std::vector<std::string> request = {"milk water", "sugar"};
   converterJson.addRequests(request);
   std::vector<std::string> newFiles = {
-      "/resources/file001.txt", "/resources/file002.txt",
-      "/resources/file003.txt", "/resources/file004.txt"};
+      "../resources/file001.txt", "../resources/file002.txt",
+      "../resources/file003.txt", "../resources/file004.txt"};
   converterJson.addFiles(newFiles);
   // Load request from file request.json
   request = converterJson.GetRequests();
